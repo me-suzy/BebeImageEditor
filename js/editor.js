@@ -229,24 +229,44 @@
         saveCurrentDocToStore();
         if (saveFirst) {
             loadDocFromStore(i);
+            var saveName = prompt('Numele fișierului:', docName || 'image');
+            if (saveName === null) { renderTabs(); return; } // user cancelled
+            saveName = saveName.replace(/\.png$/i, '');
+            docName = saveName;
+            documents[i].name = saveName;
             const link = document.createElement('a');
-            link.download = (docName || 'image') + '.png';
+            link.download = saveName + '.png';
             link.href = mainCanvas.toDataURL('image/png');
             link.click();
         }
         documents.splice(i, 1);
         if (documents.length === 0) {
-            documents.push({
-                name: 'Untitled-' + (nextDocId++),
-                layers: [],
-                nextLayerId: 1,
-                canvasWidth: 1161,
-                canvasHeight: 900,
-                canvasColor: '#ffffff',
-                undoStack: [],
-                redoStack: []
-            });
-            currentDocIndex = 0;
+            // Niciun document deschis — arată stare goală
+            currentDocIndex = -1;
+            layers = [];
+            nextLayerId = 1;
+            selectedLayerId = null;
+            undoStack = [];
+            redoStack = [];
+            docName = '';
+            canvasWidth = 0;
+            canvasHeight = 0;
+            mainCanvas.width = 0;
+            mainCanvas.height = 0;
+            drawCanvas.width = 0;
+            drawCanvas.height = 0;
+            mainCanvas.style.width = '0';
+            mainCanvas.style.height = '0';
+            drawCanvas.style.width = '0';
+            drawCanvas.style.height = '0';
+            docInfoEl.textContent = '';
+            statusSizeEl.textContent = '';
+            document.getElementById('propDocName').textContent = '-';
+            layersListEl.innerHTML = '';
+            if (propSelectionColorsEl) propSelectionColorsEl.style.display = 'none';
+            propLayerOpacityEl.style.display = 'none';
+            renderTabs();
+            return;
         } else {
             if (i < currentDocIndex) currentDocIndex--;
             currentDocIndex = Math.min(currentDocIndex, documents.length - 1);
@@ -1467,7 +1487,7 @@
 
     // ---- New / Open / Save ----
     document.getElementById('btnNew').addEventListener('click', () => {
-        saveCurrentDocToStore();
+        if (documents.length > 0) saveCurrentDocToStore();
         documents.push({
             name: 'Untitled-' + (nextDocId++),
             layers: [],
