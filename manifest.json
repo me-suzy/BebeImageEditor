@@ -1,0 +1,44 @@
+{
+  "id": "/bebe-image-editor/index.php",
+  "name": "Bebe Image Editor",
+  "short_name": "Bebe Editor",
+  "description": "Editor de imagini inspirat din Macromedia Fireworks",
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#2b2b3d",
+  "icons": [
+    {
+      "src": "favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "favicon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "favicon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
