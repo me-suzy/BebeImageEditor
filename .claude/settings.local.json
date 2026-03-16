@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -S 127.0.0.1:8765 -t .)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where php:*)",
+      "Read(//c/xampp/php/**)",
+      "Bash(node -c js/editor.js)",
+      "Bash(\"D:/Teste cursor/Bebe:*)",
+      "Bash(\"C:/xampp/php/php.exe\" \"D:/Teste cursor/Bebe Image Editor/generate-icons.php\")",
+      "Bash(ls -la \"D:/Teste cursor/Bebe Image Editor/favicon\"*)",
+      "Bash(\"C:/xampp/php/php.exe\" \"D:/Teste cursor/Bebe Image Editor/make-ico.php\")",
+      "Bash(cscript //nologo \"D:/Teste cursor/Bebe Image Editor/create-shortcut.vbs\")"
+    ]
+  }
+}
