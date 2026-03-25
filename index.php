@@ -20,7 +20,7 @@ $docRoot = str_replace('\\', '/', __DIR__);
     <meta name="theme-color" content="#2b2b3d">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Bebe Editor">
-    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/editor.css?v=<?php echo filemtime(__DIR__.'/css/editor.css'); ?>">
 </head>
 <body>
     <div id="app">
@@ -400,7 +400,7 @@ $docRoot = str_replace('\\', '/', __DIR__);
         <input type="file" id="fileInput" accept="image/*" style="display:none">
     </div>
 
-    <script src="js/editor.js"></script>
+    <script src="js/editor.js?v=<?php echo filemtime(__DIR__.'/js/editor.js'); ?>"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(function() {});
