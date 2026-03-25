@@ -3,7 +3,7 @@
 body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: #2d2d2d; color: #e0e0e0; overflow: hidden; }
 
 #app { display: flex; flex-direction: column; height: 100vh; }
-:root { --toolbar-width: 52px; }
+:root { --toolbar-width: 80px; }
 
 /* Menu bar */
 .menu-bar {
@@ -108,8 +108,8 @@ body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: #2d2d
     left: 0;
     top: 28px;
     bottom: 22px;
-    width: var(--toolbar-width, 52px);
-    min-width: 52px;
+    width: var(--toolbar-width, 80px);
+    min-width: 80px;
     max-width: 280px;
     background: #252526;
     border-right: 1px solid #444;
@@ -120,7 +120,7 @@ body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: #2d2d
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 8px 4px;
+    padding: 8px 6px;
 }
 .toolbar-resize {
     position: relative;
@@ -177,7 +177,7 @@ body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background: #2d2d
 .workspace {
     display: flex;
     flex: 1;
-    margin-left: var(--toolbar-width, 52px);
+    margin-left: var(--toolbar-width, 80px);
     margin-top: 28px;
     margin-bottom: 22px;
     overflow: hidden;
