@@ -1602,12 +1602,12 @@
         var resizeHandle = document.getElementById('toolbarResize');
         var toolbar = document.getElementById('toolbar');
         if (!resizeHandle || !toolbar) return;
-        var minW = 52, maxW = 280;
+        var minW = 80, maxW = 280;
         var startX = 0, startW = 0;
 
         function getToolbarWidth() {
             var w = getComputedStyle(document.documentElement).getPropertyValue('--toolbar-width').trim();
-            return Math.max(minW, Math.min(maxW, parseInt(w, 10) || 52));
+            return Math.max(minW, Math.min(maxW, parseInt(w, 10) || 80));
         }
         function setToolbarWidth(px) {
             document.documentElement.style.setProperty('--toolbar-width', Math.max(minW, Math.min(maxW, px)) + 'px');
@@ -1803,15 +1803,47 @@
         render();
     }
 
+    // Hidden contenteditable element to receive native paste events
+    var pasteTarget = document.createElement('div');
+    pasteTarget.setAttribute('contenteditable', 'true');
+    pasteTarget.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+    document.body.appendChild(pasteTarget);
+
+    function pasteImageBlob(blob) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+            var img = new Image();
+            img.onload = function () {
+                pushUndo();
+                // Expand canvas if pasted image is larger, but never shrink
+                if (img.width > canvasWidth) canvasWidth = img.width;
+                if (img.height > canvasHeight) canvasHeight = img.height;
+                createLayer({ type: 'image', x: 0, y: 0, w: img.width, h: img.height, imageData: ev.target.result });
+                selectedLayerId = layers[layers.length - 1].id;
+                render();
+                renderLayersList();
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(blob);
+    }
+
     function pasteSelection() {
-        if (!clipboard) return;
-        pushUndo();
-        var pasted = JSON.parse(JSON.stringify(clipboard));
-        pasted.id = nextLayerId++;
-        pasted.x += 10; pasted.y += 10;
-        layers.push(pasted);
-        selectedLayerId = pasted.id;
-        render();
+        if (clipboard) {
+            pushUndo();
+            var pasted = JSON.parse(JSON.stringify(clipboard));
+            pasted.id = nextLayerId++;
+            pasted.x += 10; pasted.y += 10;
+            layers.push(pasted);
+            selectedLayerId = pasted.id;
+            render();
+            return;
+        }
+        // Focus the hidden contenteditable and trigger a native paste
+        // so the browser fires the 'paste' event with clipboard image data
+        pasteTarget.innerHTML = '';
+        pasteTarget.focus();
+        document.execCommand('paste');
     }
 
     function duplicateSelection() {
@@ -2120,7 +2152,17 @@
         // Ctrl+C
         else if (e.ctrlKey && e.key === 'c') { e.preventDefault(); handleMenuAction('copy'); }
         // Ctrl+V
-        else if (e.ctrlKey && e.key === 'v') { e.preventDefault(); handleMenuAction('paste'); }
+        else if (e.ctrlKey && e.key === 'v') {
+            if (clipboard) {
+                e.preventDefault();
+                handleMenuAction('paste');
+            } else {
+                // Focus hidden contenteditable so the native paste event fires
+                // Do NOT preventDefault — let the browser handle it
+                pasteTarget.innerHTML = '';
+                pasteTarget.focus();
+            }
+        }
         // Ctrl+A
         else if (e.ctrlKey && e.key === 'a') { e.preventDefault(); handleMenuAction('selectAll'); }
         // Ctrl+D
@@ -2135,6 +2177,33 @@
         else if (e.ctrlKey && e.key === '0') { e.preventDefault(); handleMenuAction('fitAll'); }
         // Ctrl+1
         else if (e.ctrlKey && e.key === '1') { e.preventDefault(); handleMenuAction('zoom100'); }
+    });
+
+    // Handle native paste event (for system clipboard images like screenshots)
+    // This also works as fallback when Ctrl+V fires natively (e.g. from contenteditable)
+    document.addEventListener('paste', function (e) {
+        var cd = e.clipboardData;
+        if (!cd) return;
+        // Check items first
+        if (cd.items) {
+            for (var i = 0; i < cd.items.length; i++) {
+                if (cd.items[i].type.indexOf('image/') === 0) {
+                    e.preventDefault();
+                    var blob = cd.items[i].getAsFile();
+                    if (blob) { pasteImageBlob(blob); return; }
+                }
+            }
+        }
+        // Fallback: check files
+        if (cd.files) {
+            for (var j = 0; j < cd.files.length; j++) {
+                if (cd.files[j].type.indexOf('image/') === 0) {
+                    e.preventDefault();
+                    pasteImageBlob(cd.files[j]);
+                    return;
+                }
+            }
+        }
     });
 
     // Init
