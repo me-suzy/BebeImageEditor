@@ -1060,6 +1060,10 @@
         marqueeStart = null;
         lassoPoints = [];
         penPoints = [];
+        brushStart = null;
+        brushPoints = [];
+        shapeStart = null;
+        cropStart = null;
         drawCtx.clearRect(0, 0, canvasWidth, canvasHeight);
         // Redraw bitmap selection if exists
         if (bitmapSelection) {
